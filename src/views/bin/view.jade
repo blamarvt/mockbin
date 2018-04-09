@@ -7,7 +7,7 @@ block content
         h3 Bin Identifier: #[code= req.params.uuid]
 
         div#preview
-          pre: code= data.json
+          pre: textarea#binbody= data.json
 
       div.col-sm-3
         h3 Next Steps
@@ -15,6 +15,7 @@ block content
         a(href= '#apiembed').btn.btn-block.btn-primary #[span.badge 1] &nbsp; Send Some Requests
         a(href= '/bin/' + req.params.uuid).btn.btn-block.btn-primary #[span.badge 2] &nbsp; Visit in Browser
         a(href= '/bin/' + req.params.uuid + '/log').btn.btn-block.btn-primary #[span.badge 3] &nbsp; View History
+        a#updatebody.btn.btn-block.btn-primary #[span.badge 4] &nbsp; Update Bin
 
     br
 
@@ -25,8 +26,23 @@ block content
 block scripts
   script(type='text/javascript').
     $(function() {
+      $('#updatebody').click(updateBody);
       // highlight the code
       $('pre code').each(function (i, block) {
         hljs.highlightBlock(block);
       });
     });
+  script(type='text/javascript').
+    function updateBody() {
+
+      $.ajax({
+          type: 'POST',
+          url: location.href.replace('view', 'update'),
+          data: $('#binbody').val(),
+          dataType: 'json',
+          contentType: 'application/json',
+          success: () => {
+              location.reload()
+          },
+      });
+    };
